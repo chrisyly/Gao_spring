@@ -5,12 +5,33 @@ March 4, 2017
 Project Plan
 
 Open Source Project (2 weeks)
-Week 1: (Spring Tool Suite)
-1.	Build basic body of website, enable the functions like log in,  log off. 
-2.	Classification of users, authority.
-3.	Functions: upload data directly or csv file etc. (SQL)
-4.	Functions: review the data, classified by date and user.
+
+Summary:
+Web project using spring framework. Develop a website allow user to register, login/logout, and manage user account.
+The website should allow:
+  1. User to upload their files
+  2. User could review their uploads if its image/doc
+  3. User could manager their uploads (download/delete/...)
+
+Week 1: (Using Spring Tool Suite)
+// 1.	Build basic body of website, enable the functions like log in,  log off.
+1.  Using the spring framework(STS) to set up a basic website, understand how STS is working
+//2.	Classification of users, authority.
+2.  Adding web services for basic web functionalities/user story
+//3.	Functions: upload data directly or csv file etc. (SQL)
+//4.	Functions: review the data, classified by date and user.
+3.  Running/testing the website on local
 
 Week 2:
 1.	Upload algorithm and return a simple report as jpg, png files etc.
-2.	Test the exceptions like invalid data, numbers, broken files. 
+//2.	Test the exceptions like invalid data, numbers, broken files. 
+
+API requirements:
+1.  user account management (java)
+  a. user login/logout
+  b. user profile
+  c. others
+2.  user behavior management (java)
+  a.  handle user input/output
+3.  web sql link (hibernate/REST/JSON/SQL)
+4.  web CSS develop (CSS)
