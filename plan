@@ -1,0 +1,16 @@
+Liyu Ying, Ruoyi Gao
+March 4, 2017
+
+
+Project Plan
+
+Open Source Project (2 weeks)
+Week 1: (Spring Tool Suite)
+1.	Build basic body of website, enable the functions like log in,  log off. 
+2.	Classification of users, authority.
+3.	Functions: upload data directly or csv file etc. (SQL)
+4.	Functions: review the data, classified by date and user.
+
+Week 2:
+1.	Upload algorithm and return a simple report as jpg, png files etc.
+2.	Test the exceptions like invalid data, numbers, broken files. 
