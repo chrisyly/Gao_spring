@@ -1,0 +1,3 @@
+This Application is a demo application to:
+1. Implement 'http:// localhost:8080/' to send a greeting message from UC Davis.
+2. Implement class Application.java to show the BeanDefinitionNames.
