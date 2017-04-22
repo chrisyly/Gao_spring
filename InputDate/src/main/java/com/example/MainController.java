@@ -28,8 +28,21 @@ public class MainController {
     System.out.println("body => " + body);
     Map<String,String> records = parseParams(body);
     
-    String startDate = records.get("start_date");
-    String endDate = records.get("end_date");
+    String startDate = records.get("startDate");
+    String endDate = records.get("endDate");
+    
+    try {
+        Connection connection = getConnection();
+
+        Statement stmt = connection.createStatement();
+        createTables(connection);
+        
+        createRequest(connection, startDate, endDate);
+
+      } catch (Exception e) {
+        e.printStackTrace();
+        return "There was an error: " + e.getMessage();
+      }
     
     return "ok";
   }
@@ -50,39 +63,17 @@ public class MainController {
   }
 
   
-
-  /*
-  private void createAppointment(Connection connection, String inviteeId, String date, Boolean sendSms) throws SQLException {
+  private void createRequest(Connection connection, String startDate, String endDate) throws SQLException {
     PreparedStatement pstmt = connection.prepareStatement(
-        "INSERT INTO appointments (invitee_id, date) VALUES (?,?)");
-    pstmt.setString(1, inviteeId);
-    pstmt.setString(2, date);
+        "INSERT INTO requests (start_Date, end_Date) VALUES (?,?)");
+    pstmt.setString(1, startDate);
+    pstmt.setString(2, endDate);
     pstmt.executeUpdate();
   }
-  */
-  
-  
-  /*
-  private void createInvitee(Connection connection, String name, String email, String phone) throws SQLException {
-    PreparedStatement pstmt = connection.prepareStatement(
-        "SELECT name FROM invitees WHERE email=?");
-    pstmt.setString(1, email);
-    ResultSet rs = pstmt.executeQuery();
-
-    if (!rs.next()) {
-      pstmt = connection.prepareStatement(
-          "INSERT INTO invitees (name, email, phone) VALUES (?,?,?)");
-      pstmt.setString(1, name);
-      pstmt.setString(2, email);
-      pstmt.setString(3, phone);
-      pstmt.executeUpdate();
-    }
-  }
-  */
-
+ 
   private void createTables(Connection connection) throws SQLException {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS appointments (" +
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS requests (" +
       "start_date  varchar(250)," +
       "end_date    varchar(250),"+
     ")");
