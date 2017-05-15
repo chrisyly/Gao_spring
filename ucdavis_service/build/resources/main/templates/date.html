@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+  <title>Please pick a period</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
+  <link rel="stylesheet" href="/resources/demos/style.css"></link>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#datepicker1" ).datepicker({
+      showButtonPanel: true
+    });
+  } );
+  </script>
+  
+  <script>
+  $( function() {
+    $( "#datepicker2" ).datepicker({
+      showButtonPanel: true
+    });
+  } );
+  </script>
+</head>
+<body>
+ 
+<p>BloomDate: <input type="text" id="datepicker1"></input></p>
+<p>PredDate: <input type="text" id="datepicker2"></input></p>
+
+<button onclick="myFunction()">Submit</button>
+
+<p id="demo"></p>
+
+<script>
+function myFunction() {
+	var startDate = document.getElementById("datepicker1");
+	var endDate = document.getElementById("datepicker2");
+    document.getElementById("demo").innerHTML = "The period is: " + startDate.value +" to " + endDate.value;
+}
+</script>
+ 
+ 
+</body>
+</html>
