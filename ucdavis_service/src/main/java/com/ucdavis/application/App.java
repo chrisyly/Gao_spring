@@ -1,25 +1,21 @@
 package com.ucdavis.application;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class App {
 
-	/*
-	@Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(App.class);
-    }
-    */
-	
-	public static void main(String[] args) {
-		
-		SpringApplication.run(App.class, args);
-		System.out.println("The app is running!");
-		
-		
-	}
+	private static final Logger log = LoggerFactory.getLogger(App.class);
 
+	public static void main(String args[]) {
+		SpringApplication.run(App.class);
+		System.out.println("The application is running!");
+	}
 }

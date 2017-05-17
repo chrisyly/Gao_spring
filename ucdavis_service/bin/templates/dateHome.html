@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<body>
+	<h2>Please pick a period</h2>
+		<form action="/addRequest" method="post" modelAttribute="dateRequest">
+			<input id="id" name ="id" placeholder="your id here" />
+			<input id="bloomDate" name="bloomDate" placeholder="MM-DD-YYYY" type="text"/> MM-DD-YYYY
+			<input id="predictDate" name="predictDate" placeholder="MM-DD-YYYY" type="text"/>MM-DD_YYYY
+			<button class="btn btn-primary " name="submit" type="submit">Submit</button>
+		</form>
+	</body>
+</html>
