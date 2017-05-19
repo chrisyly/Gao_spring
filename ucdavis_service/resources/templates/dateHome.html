@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<body>
+	<h2>Please pick a period</h2>
+		<form action="/addRequest" method="post" modelAttribute="dateRequest">
+			<table border="1">
+				<tr>
+					<td>Id</td>
+					<td><input id="id" name ="id" placeholder="your id here" /></td>
+				</tr>
+				<tr>
+					<td>BloomDate</td>
+					<td><input id="bloomDate" name="bloomDate" placeholder="MM-DD-YYYY" type="date"/></td>
+				</tr>
+				<tr>
+					<td>PredictDate</td>
+					<td><input id="predictDate" name="predictDate" placeholder="MM-DD-YYYY" type="date"/></td>
+				</tr>
+				<tr>
+					<td><button class="btn btn-primary " name="submit" type="submit">Submit</button></td>
+					<td><button name="reset" type="reset">Reset</button></td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

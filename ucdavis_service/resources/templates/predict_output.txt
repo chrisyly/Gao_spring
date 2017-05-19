@@ -1,0 +1,21 @@
+Nonlinear mixed model fit by maximum likelihood  ['nlmerMod']
+Formula: firmness ~ SSasympOff(tu, Asym, R0, lrc) ~ Asym + lrc | cultivar/site
+   Data: datasheet
+      AIC       BIC    logLik  deviance  df.resid 
+ 34411.38  34479.86 -17195.69  34391.38      6950 
+Random effects:
+ Groups        Name Std.Dev. Corr 
+ site:cultivar Asym  0.9463       
+               lrc  20.1764  -0.25
+ cultivar      Asym  1.3867       
+               lrc   3.7311  0.08 
+ Residual            2.8453       
+Number of obs: 6960, groups:  site:cultivar, 16; cultivar, 5
+Fixed Effects:
+  Asym      R0     lrc  
+ 24.20   -6.72  296.83  
+
+R result:
+> max(mod_pred)
+[1] 24.97737
+
