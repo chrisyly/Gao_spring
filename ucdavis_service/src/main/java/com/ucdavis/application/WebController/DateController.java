@@ -14,22 +14,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ucdavis.application.DateRequest;
 
 @Controller
+@SessionAttributes("id") 
 public class DateController {
-
-	Map<Long, DateRequest> dateRequestMap = new HashMap<>();
+	
+	Map<String, DateRequest> dateRequestMap = new HashMap<>();
 	
 	@RequestMapping(value = "/request", method = RequestMethod.GET)
 	public ModelAndView showDateForm() {
+		
 		return new ModelAndView("dateHome", "dateRequest", new DateRequest());
 	}
 	
+
+	
 	@RequestMapping(value = "/svc/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody DateRequest getEmployeeById(@PathVariable final long id) {
+    public @ResponseBody DateRequest getEmployeeById(@PathVariable final String id) {
 		return dateRequestMap.get(id);
 	}
 
@@ -42,14 +47,14 @@ public class DateController {
 		
 		model.addAttribute("id", dateRequest.getId());
 		model.addAttribute("bloomDate", dateRequest.getBloomDate());
+		System.out.println(dateRequest.getBloomDate());
 		model.addAttribute("predictDate", dateRequest.getPredictDate());
+		System.out.println(dateRequest.getPredictDate());
 		dateRequestMap.put(dateRequest.getId(), dateRequest);
-		System.out.println(dateRequestMap.toString());
 		
-		String bloomDate = model.get("bloomDate").toString();
-		String predictDate = model.get("predictDate").toString();
-		System.out.println(bloomDate +"to " + predictDate);
+		String bloomDate = (String) model.get("bloomDate");
+		String predictDate = (String) model.get("predictDate");
 		
-		return "DateSubmitted";
+		return "loader";
 	}
 }

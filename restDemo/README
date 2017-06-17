@@ -1,6 +1,0 @@
-This app is to use the restDemoTest under src/test/java/com.example to read a json file on data.sparkfun.com/stream/somedata.json
-
-Library used: org.springframework.http.ResponseEntity;
-              org.springframework.web.client.RestTemplate;
-              
-Tested as JUnit

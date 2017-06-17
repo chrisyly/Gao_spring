@@ -1,3 +1,0 @@
-This Application is a demo application to:
-1. Implement 'http:// localhost:8080/greeting' to send a message " {"id":1,"content":"Hello, World!"} ".
-2. Implement 'http:// localhost:8080/greeting?name=User' to send a message " {"id":2,"content":"Hello, User!"} "
