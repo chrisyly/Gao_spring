@@ -230,9 +230,10 @@ public class HeatUnitService {
 	 */
 	@Override
 	public String toString() {
-		return "HeatUnitService [bloomDate=" + bloomDate + ", currentDate=" + currentDate + ", heatUnit=" + heatUnit
-				+ ", prediction=" + prediction + ", maxHeatUnit=" + maxHeatUnit + "]";
+		return "HeatUnitService [bloomDate=" + bloomDate + ", currentDate=" + currentDate + ", SumOfHeatUnit="
+				+ SumOfHeatUnit + ", prediction=" + prediction + ", maxHeatUnit=" + maxHeatUnit + "]";
 	}
+
 }
 	
 	
