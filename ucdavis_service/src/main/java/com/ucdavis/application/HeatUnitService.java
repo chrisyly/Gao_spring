@@ -1,161 +1,149 @@
-package com.ucdavis.application;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 public class HeatUnitService {
 	
-	private int locationId;
+	private String stationName;
+
+	private String bloomDate;
 	
-	private int startDate;
+	private String currentDate;
 	
-	private int endDate;
+	private List<List<String>> dataList;
 	
 	private Double SumOfHeatUnit;
 	
 	private List<Double> heatUnit;
+	
+	private List<Object> prediction;
+	
+	private Double maxHeatUnit;
 
+	
 	public HeatUnitService() {
 		super();
 	}
 
-	public HeatUnitService(int locationId, int startDate, int endDate) {
+	public HeatUnitService(String bloomDate, String currentDate, Double maxHeatUnit) {
 		super();
-		this.locationId = locationId;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.bloomDate = bloomDate;
+		this.currentDate = currentDate;
+		this.maxHeatUnit = maxHeatUnit;
+	}
+	
+	/**
+	 * @return the bloomDate
+	 */
+	public final String getBloomDate() {
+		return bloomDate;
 	}
 
 	/**
-	 * @return the locationId
+	 * @param bloomDate the bloomDate to set
 	 */
-	public final int getLocationId() {
-		return locationId;
+	public final void setBloomDate(String bloomDate) {
+		this.bloomDate = bloomDate;
 	}
 
 	/**
-	 * @param locationId the locationId to set
+	 * @return the currentDate
 	 */
-	public final void setLocationId(int locationId) {
-		this.locationId = locationId;
+	public final String getCurrentDate() {
+		return currentDate;
 	}
 
 	/**
-	 * @return the startDate
+	 * @param currentDate the currentDate to set
 	 */
-	public final int getStartDate() {
-		return startDate;
+	public final void setCurrentDate(String currentDate) {
+		this.currentDate = currentDate;
 	}
+	
 
 	/**
-	 * Set the start date
-	 * @param startDate the startDate to set
+	 * @param maxHeatUnit the maxHeatUnit to set
 	 */
-	public final void setStartDate(int startDate) {
-		this.startDate = startDate;
+	public final void setMaxHeatUnit(Double maxHeatUnit) {
+		this.maxHeatUnit = maxHeatUnit;
+	}
+	
+	/**
+	 * @return the maxHeatUnit
+	 */
+	public final Double getMaxHeatUnit() {
+		return maxHeatUnit;
 	}
 
-	/**
-	 * @return the endDate
-	 */
-	public final int getEndDate() {
-		return endDate;
+	public final void setSumOfHeatUnit() {
+		this.SumOfHeatUnit = calculateSumOfHeatUnit(this.heatUnit);
 	}
-
-	/**
-	 * @param endDate the endDate to set
-	 */
-	public final void setEndDate(int endDate) {
-		this.endDate = endDate;
+	
+	public final void setPrediction() throws ParseException {
+		this.prediction = predictMaxmimumFirmness(this.maxHeatUnit);
 	}
-
-	/**
-	 * @return the heatUnit
-	 */
+	
+	
 	public final List<Double> getHeatUnit() {
 		return heatUnit;
 	}
+
+	public final void setHeatUnit() throws ParseException {
+		List<Double> result = new ArrayList<>();
+		Date d1 = getDateFromString(this.bloomDate);
+		Date d2 = getDateFromString(this.currentDate);
+		
+		while(d1.before(d2)) {
+			result.add(getDataOnDay(d1));
+			d1 = addOneDay(d1);
+		}
+		
+		result.add(getDataOnDay(d2));
+		
+		this.heatUnit = result;
+	}
 	
 	
 	/**
-	 * default setHeatUnit
-	 * @param locationId the location id to set
-	 * @param startDate the start date to set
-	 * @param endDate the end date to set
+	 * @return the stationName
 	 */
-	public final void setHeatUnit() {
-		this.heatUnit = this.getDataList(this.locationId, this.startDate, this.endDate);
+	public final String getStationName() {
+		return stationName;
 	}
 
 	/**
-	 * @param heatUnit the heatUnit to set
+	 * @return the sumOfHeatUnit
 	 */
-	public final void setHeatUnit(List<Double> heatUnit) {
-		this.heatUnit = heatUnit;
+	public final Double getSumOfHeatUnit() {
+		return SumOfHeatUnit;
 	}
-	
+
 	/**
-	 * setHeatUnit change all parameters
-	 * @param locationId the location id to set
-	 * @param startDate the start date to set
-	 * @param endDate the end date to set
+	 * @return the prediction
 	 */
-	public final void setHeatUnit(int locationId, int startDate, int endDate) { // set Heat Unit by 3 params
-		this.locationId = locationId;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.heatUnit =  this.getDataList(locationId, startDate, endDate);
+	public final List<Object> getPrediction() {
+		return prediction;
 	}
-	
-	/**
-	 * setHeatUnit change locationId
-	 * @param locationId the location id to set
-	 */
-	public final void setHeatUnit(int locationId) {// change location
-		this.locationId = locationId;
-		this.heatUnit = this.getDataList(locationId, this.startDate, this.endDate);
+
+
+	public final List<List<String>> getDataList() {
+		return dataList;
 	}
-	
-	/**
-	 * setHeatUnit change locationId and endDate
-	 * @param locationId the location id to set
-	 * @param endDate the endDate to set
-	 */
-	public final void setHeatUnit(int locationId, int endDate) { // change end date
-		this.locationId = locationId;
-		this.endDate = endDate;
-		this.heatUnit = this.getDataList(locationId, this.startDate, endDate);
-	}
-	
-	/**
-	 * update List heatUnit by startDate and endDate
-	 * @param startDate the startDate to set
-	 * @param endDate the endDate to set
-	 */
-	public final void updateList(int startDate, int endDate) { // update new data
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.heatUnit = this.getDataList(this.locationId, startDate, endDate);
-	}
-	
-	/**
-	 * get the heatUnit set by specified CSV file
-	 * @param locationId the location of data
-	 * @param startDate the startDate of data
-	 * @param endDate the endDate of data
-	 * @return the list of heatUnit
-	 */
-	private List<Double> getDataList(int locationId, int startDate, int endDate) { // get data from CSV file
-		String fileName = "/Users/Mushi/Desktop/1/demoCSV.csv";
+
+
+	public final void setDataList() {
+		String fileName = "/Users/Mushi/Desktop/Edited_Data/95616-8215-DAVIS.T_edited.csv";
 		File file = new File(fileName);
 		
-		// 2-dimensional array
+		// csv --> list<List<string>>
 		List<List<String>> lines = new ArrayList<>();
-		List<String> inquiries = new ArrayList<>();
-		List<Double> result = new ArrayList<>();
 		Scanner inputStream;
 		try{
             inputStream = new Scanner(file);
@@ -167,20 +155,22 @@ public class HeatUnitService {
                 lines.add(Arrays.asList(values));
             }
             inputStream.close();
-            
-            inquiries = lines.get(locationId).subList(startDate, endDate + 1);
-            
-            // String -> Double
-            for (String inquiry : inquiries){
-            	result.add(Double.valueOf(inquiry));
-            }
-        }catch (FileNotFoundException e) {
+		}catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+		}
+		this.dataList = lines;
+	}
+	
+	private Double getDataOnDay(Date day) throws ParseException {
+		Date zero = getDateFromString("20170101");
+
+		int index = (int)((day.getTime() - zero.getTime()) / (1000 * 60 * 60 * 24) + 3);
+		
+		Double result = Double.valueOf(this.dataList.get(index).get(4)); // 4 is heat units
 		
 		return result;
 	}
-
+	
 	/**
 	 * calculate the sum of heat unit by List heatUnit
 	 * @param heatUnits the list of heatUnit
@@ -193,35 +183,57 @@ public class HeatUnitService {
 		}
 		return sum;
 	}
-
-	/**
-	 * @return the sumOfHeatUnit
-	 */
-	public final Double getSumOfHeatUnit() {
-		return SumOfHeatUnit;
-	}
-
-	/**
-	 * @param sumOfHeatUnit the sumOfHeatUnit to set
-	 */
-	public final void setSumOfHeatUnit() {
-		this.SumOfHeatUnit = calculateSumOfHeatUnit(this.heatUnit);
+	
+	
+	private Date getDateFromString(String date) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Date d1 = sdf.parse(date);
+		return d1;
 	}
 	
-	/**
-	 * print the heat units
-	 */
-	public void printHeatUnit() {
-		System.out.println(this.getHeatUnit().toString());
-		System.out.println("The number of days is: " + this.heatUnit.size());
+	
+	public List<Object> predictMaxmimumFirmness(Double totalTU) throws ParseException {
+		List<Object> result = new ArrayList<>();
+		setSumOfHeatUnit();
+		Double heatUnitCount = this.SumOfHeatUnit;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		
+		Date date = getDateFromString(this.currentDate);
+		int dayCount = 0;
+
+		if (heatUnitCount >= totalTU) {
+			result.add(this.currentDate);
+			result.add(dayCount);
+		}
+		
+		while (heatUnitCount <= totalTU) {
+			date = addOneDay(date);
+			heatUnitCount += getDataOnDay(date);
+			dayCount++;
+		}
+		
+		result.add(date);
+		result.add(dayCount + " days");
+		return result;
 	}
 	
-	/**
-	 * print the sum of heat units
+	private Date addOneDay(Date dt) {
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(dt); 
+		c.add(Calendar.DATE, 1);
+		Date date = c.getTime();
+		return date;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
-	public void printSumOfHeatUnit() {
-		this.setSumOfHeatUnit();
-		System.out.println("sum is "+ this.getSumOfHeatUnit().toString());
+	@Override
+	public String toString() {
+		return "HeatUnitService [bloomDate=" + bloomDate + ", currentDate=" + currentDate + ", heatUnit=" + heatUnit
+				+ ", prediction=" + prediction + ", maxHeatUnit=" + maxHeatUnit + "]";
 	}
 }
-
+	
+	
+	
