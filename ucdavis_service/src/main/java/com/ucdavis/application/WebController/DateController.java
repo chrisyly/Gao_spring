@@ -1,6 +1,5 @@
 package com.ucdavis.application.WebController;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,8 +39,8 @@ public class DateController {
 
 	
 	@RequestMapping(value = "/svc/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody String getRequestById(@PathVariable final String id) {
-		return serviceMap.get(id).toString();
+    public @ResponseBody String getRequestById(@PathVariable final String id) throws ParseException {
+		return serviceMap.get(id).toString() + serviceMap.get(id).printDayWithSumHU().toString();
 	}
 	
 	@RequestMapping(value = "/result") 
@@ -91,23 +90,17 @@ public class DateController {
 		service.setStationName(dateRequest.getStation());
 		
 		service.setDataList();
-		System.out.println(service.getDataList());
 		
 		service.setHeatUnit();
-		System.out.println(service.getHeatUnit());
 		
 		service.setSumOfHeatUnit();
-		System.out.println(service.getSumOfHeatUnit());
 		
 		service.setMaxHeatUnit(2050.00);
-		System.out.println(service.getMaxHeatUnit());
+
 		service.setPrediction();
-		System.out.println(service.getPrediction());
-		System.out.println(service.toString());
 		
 		serviceMap.put(dateRequest.getId(), service);
 		
-		
-		return service.toString();
+		return service.toString() + service.printDayWithSumHU().toString();
 	}
 }

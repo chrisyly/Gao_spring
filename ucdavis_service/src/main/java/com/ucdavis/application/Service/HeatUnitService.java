@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-
-import org.springframework.core.io.ClassPathResource;
 
 public class HeatUnitService {
 	
@@ -169,6 +169,25 @@ public class HeatUnitService {
             e.printStackTrace();
 		}
 		this.dataList = lines;
+	}
+	
+	public ArrayList<Map<String, Double>> printDayWithSumHU() throws ParseException {
+		ArrayList<Map<String, Double>> rst = new ArrayList<>();
+		Date srt = getDateFromString(this.bloomDate);
+		Date end = getDateFromString((String)this.getPrediction().get(0));
+		Double hU = 0.0;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		
+		while(srt.before(end) || srt.equals(end)) {
+			hU += getDataOnDay(srt);
+			Map<String, Double> mapping = new HashMap<>();
+			mapping.put(sdf.format(srt), hU);
+			rst.add(mapping);
+			srt = addOneDay(srt);
+		}
+		
+		
+		return rst;
 	}
 	
 	private Double getDataOnDay(Date day) throws ParseException {
