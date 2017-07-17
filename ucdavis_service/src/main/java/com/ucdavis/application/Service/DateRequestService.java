@@ -24,8 +24,8 @@ public class DateRequestService {
 		return filteredRequest;
 	}
 	
-	public void addRequest(String id, String bloomDate, String predictDate) {
-		requestList.add(new DateRequest(++requestNumber, id, bloomDate, predictDate));
+	public void addRequestDateRequest(String id, String bloomDate, String currentDate, String county, String station) {
+		requestList.add(new DateRequest(id, bloomDate, currentDate, county, station));
 	}
 	
 	public void deleteRequest(String id) {

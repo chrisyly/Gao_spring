@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ResultController {
 
-	@RequestMapping("/result")
+	@RequestMapping("/resultType")
 	public String returnResult() {
-		return "result";
+		return "resultType";
 	}
 	
 	@RequestMapping("/csv")

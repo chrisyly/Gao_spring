@@ -17,7 +17,7 @@ public class DateRequestController {
 	public DateRequest getRequest(@PathVariable final int requestNumber) {
 		DateRequest request = new DateRequest();
 		request.setBloomDate("2011-01-21");
-		request.setPredictDate("2011-03-01");
+		request.setCurrentDate("2011-03-01");
 		System.out.print(request.toString());
 		return request;	
 	}

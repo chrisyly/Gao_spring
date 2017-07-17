@@ -1,5 +1,9 @@
 package com.ucdavis.application.WebController;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +22,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ucdavis.application.DateRequest;
+import com.ucdavis.application.Service.HeatUnitService;
 
 @Controller
 @SessionAttributes("id") 
 public class DateController {
 	
 	Map<String, DateRequest> dateRequestMap = new HashMap<>();
+	Map<String, HeatUnitService> serviceMap = new HashMap<>();
 	
 	@RequestMapping(value = "/request", method = RequestMethod.GET)
 	public ModelAndView showDateForm() {
@@ -34,27 +40,74 @@ public class DateController {
 
 	
 	@RequestMapping(value = "/svc/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody DateRequest getEmployeeById(@PathVariable final String id) {
-		return dateRequestMap.get(id);
+    public @ResponseBody String getRequestById(@PathVariable final String id) {
+		return serviceMap.get(id).toString();
 	}
-
 	
+	@RequestMapping(value = "/result") 
+	public ModelAndView result(@PathVariable final String id) {
+		HeatUnitService service = serviceMap.get(id);
+		ModelAndView mv = new ModelAndView();
+		mv.addObject(service.toString());
+		return mv;
+	}
+		
 	@RequestMapping(value = "/addRequest", method = RequestMethod.POST)
-	public String submit(@Valid @ModelAttribute("dateRequest") final DateRequest dateRequest, final BindingResult result, final ModelMap model) {
+	public @ResponseBody String submit(@Valid @ModelAttribute("dateRequest") final DateRequest dateRequest, final BindingResult result, final ModelMap modelMap) throws ParseException, Exception {
 		if(result.hasErrors()) {
 			return "error";
 		}
 		
-		model.addAttribute("id", dateRequest.getId());
-		model.addAttribute("bloomDate", dateRequest.getBloomDate());
+		modelMap.addAttribute("id", dateRequest.getId());
+		modelMap.addAttribute("bloomDate", dateRequest.getBloomDate());
 		System.out.println(dateRequest.getBloomDate());
-		model.addAttribute("predictDate", dateRequest.getPredictDate());
-		System.out.println(dateRequest.getPredictDate());
+		modelMap.addAttribute("currentDate", dateRequest.getCurrentDate());
+		System.out.println(dateRequest.getCurrentDate());
+		
+		// new updates
+		modelMap.addAttribute("county", dateRequest.getCounty());
+		System.out.println(dateRequest.getCounty());
+		modelMap.addAttribute("station", dateRequest.getStation());
+		System.out.println(dateRequest.getStation());
+		//
+		
 		dateRequestMap.put(dateRequest.getId(), dateRequest);
+		System.out.println(dateRequest.toString());
 		
-		String bloomDate = (String) model.get("bloomDate");
-		String predictDate = (String) model.get("predictDate");
 		
-		return "loader";
+		// Jul.10th
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateBloom = sdf.parse(dateRequest.getBloomDate());
+		Date dateCurt = sdf.parse(dateRequest.getCurrentDate());
+		
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
+		String bloom = sdf2.format(dateBloom);
+		String current = sdf2.format(dateCurt);
+		
+		HeatUnitService service = new HeatUnitService();
+	
+		service.setBloomDate(bloom);
+		service.setCurrentDate(current);
+		service.setStationName(dateRequest.getStation());
+		
+		service.setDataList();
+		System.out.println(service.getDataList());
+		
+		service.setHeatUnit();
+		System.out.println(service.getHeatUnit());
+		
+		service.setSumOfHeatUnit();
+		System.out.println(service.getSumOfHeatUnit());
+		
+		service.setMaxHeatUnit(2050.00);
+		System.out.println(service.getMaxHeatUnit());
+		service.setPrediction();
+		System.out.println(service.getPrediction());
+		System.out.println(service.toString());
+		
+		serviceMap.put(dateRequest.getId(), service);
+		
+		
+		return service.toString();
 	}
 }

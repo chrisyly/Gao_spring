@@ -12,14 +12,16 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    baseName = 'gs-uploading-files'
+    baseName = 'ucdavis_service'
     version =  '0.1.0'
 }
 
 jar {
-	manifest {
-		attributes 'Main-Class': 'com.ucdavis.application.App'
-	}
+  manifest {
+    attributes(
+      'Main-Class': 'com.ucdavis.application.App'
+    )
+  }
 }
 
 repositories {

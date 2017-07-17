@@ -1,26 +1,121 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<body>
+<body>
 	<h2>Please pick a period</h2>
-		<form action="/addRequest" method="post" modelAttribute="dateRequest">
-			<table border="1">
-				<tr>
-					<td>Id</td>
-					<td><input id="id" name ="id" placeholder="your id here" /></td>
-				</tr>
-				<tr>
-					<td>BloomDate</td>
-					<td><input id="bloomDate" name="bloomDate" placeholder="MM-DD-YYYY" type="date"/></td>
-				</tr>
-				<tr>
-					<td>PredictDate</td>
-					<td><input id="predictDate" name="predictDate" placeholder="MM-DD-YYYY" type="date"/></td>
-				</tr>
-				<tr>
-					<td><button class="btn btn-primary " name="submit" type="submit">Submit</button></td>
-					<td><button name="reset" type="reset">Reset</button></td>
-				</tr>
-			</table>
-		</form>
-	</body>
+	<form action="addRequest" method="post" modelAttribute="dateRequest">
+		<table border="1">
+			<tr>
+				<td>Id</td>
+				<td><input id="id" name="id" placeholder="your id here" /></td>
+			</tr>
+			<tr>
+				<td>Bloom Date</td>
+				<td><input id="bloomDate" name="bloomDate"
+					placeholder="MM-DD-YYYY" type="date" /></td>
+			</tr>
+			<tr>
+				<td>Current Date</td>
+				<td><input id="currentDate" name="currentDate"
+					placeholder="MM-DD-YYYY" type="date" /></td>
+			</tr>
+			<tr>
+				<td>Station Selection</td>
+				<td><label id="county"> County</label> <select name="county"
+					onChange="change()">
+						<option selected="selected">Fresno</option>
+						<option>Merced</option>
+						<option>Yolo</option>
+						<option>Kern</option>
+				</select> <label id="station"> Station</label> <select name="station">
+						<option selected="selected">93210-9656-FIVE_PTS.A</option>
+						<option>93210-9656-FIVE_PTS.C</option>
+						<option>93210-9703-Five_Points_SW.A</option>
+						<option>93210-9737-Coalinga.A</option>
+						<option>93230-9650-FRESNO.C</option>
+						<option>93266-9732-COALINGA.C</option>
+						<option>93609-9548-CARUTHERS-01.P</option>
+						<option>93616-9723-Del_Rey_Fowler-01.P</option>
+						<option>93622-9401-PANOCHE.A</option>
+						<option>93622-9647-FIREBAGH.A</option>
+						<option>93640-9706-TRNQULTY.A</option>
+						<option>93648-9755-Kearney_Ag_Ctr-01.P</option>
+						<option>93654-9232-PARLIER.A</option>
+						<option>93654-9233-KHFS32.L</option>
+						<option>93654-9758-ORANGE_COVE.A</option>
+						<option>93656-9761-SAND_RANCH-01.P</option>
+						<option>93662-9482-KINGSBURG-01.P</option>
+						<option>93723-9500-KERMAN-01.P</option>
+						<option>93725-9517-EASTON-01.P</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td><button class="btn btn-primary " name="submit"
+						type="submit">Submit</button></td>
+				<td><button name="reset" type="reset">Reset</button></td>
+			</tr>
+		</table>
+	</form>
+	<script>
+	function change()  
+	{  
+	   var x = document.getElementsByName("county")[0];  
+	   var y = document.getElementsByName("station")[0];  
+	   y.options.length = 0; // clear the second selection 
+	   if(x.selectedIndex == 0)  
+	   {  
+	        y.options.add(new Option("93210-9656-FIVE_PTS.A", false, true));  
+	        y.options.add(new Option("93210-9656-FIVE_PTS.C"));
+	        y.options.add(new Option("93210-9703-Five_Points_SW.A"));
+	        y.options.add(new Option("93210-9737-Coalinga.A"));
+	        y.options.add(new Option("3230-9650-FRESNO.C"));
+	        y.options.add(new Option("93266-9732-COALINGA.C"));
+	        y.options.add(new Option("93609-9548-CARUTHERS-01.P"));
+	        y.options.add(new Option("93616-9723-Del_Rey_Fowler-01.P"));
+	        y.options.add(new Option("93622-9401-PANOCHE.A"));
+	        y.options.add(new Option("93622-9647-FIREBAGH.A"));
+	        y.options.add(new Option("93640-9706-TRNQULTY.A"));
+	        y.options.add(new Option("93648-9755-Kearney_Ag_Ctr-01.P"));
+	        y.options.add(new Option("93654-9232-PARLIER.A"));
+	        y.options.add(new Option("93654-9233-KHFS32.L"));
+	        y.options.add(new Option("93654-9758-ORANGE_COVE.A"));
+	        y.options.add(new Option("93656-9761-SAND_RANCH-01.P"));
+	        y.options.add(new Option("93662-9482-KINGSBURG-01.P"));
+	        y.options.add(new Option("93723-9500-KERMAN-01.P"));
+	        y.options.add(new Option("93725-9517-EASTON-01.P"));
+	        
+	   }  
+	  
+	   if(x.selectedIndex == 1)  
+	   {  
+	        y.options.add(new Option("93635-4544-LOSBANOS.C", false, true));  
+	        y.options.add(new Option("93635-9509-LOSBANOS.A")); 
+	        y.options.add(new Option("95340-9489-MERCED.A"));
+	        y.options.add(new Option("95341-9527-MERCED.C"));
+	        y.options.add(new Option("95374-9620-KESTERSN.A"));
+	   }
+	   
+	   if(x.selectedIndex == 2)  
+	   {  
+	        y.options.add(new Option("95605-2007_BRYTE-A", false, true));  
+	        y.options.add(new Option("95616-8200_DAVIS.A")); 
+	        y.options.add(new Option("95616-8215-DAVIS.C"));
+	        y.options.add(new Option("95616-8215-DAVIS.T"));
+	        y.options.add(new Option("95627-2190-Esparto.A"));
+	        y.options.add(new Option("95694-9018-WINTERS.C"));
+	        y.options.add(new Option("95695-8921-Woodland.A"));
+	   }
+	   
+	   if(x.selectedIndex == 3)  
+	   {  
+	        y.options.add(new Option("93203-9704-ARVIN.A", false, true));  
+	        y.options.add(new Option("93250-9675-FAMOSO.A")); 
+	        y.options.add(new Option("93263-4042-LOST_HILLS.A"));
+	        y.options.add(new Option("93263-9773-SHAFTER.A"));
+	        y.options.add(new Option("93263-9783-WASCO.C"));
+	        y.options.add(new Option("93308-3090-BAKRSFLD.C"));
+	        y.options.add(new Option("93453-9731-BLACKWLL.A"));
+	   }
+	}  
+	</script>
+</body>
 </html>
