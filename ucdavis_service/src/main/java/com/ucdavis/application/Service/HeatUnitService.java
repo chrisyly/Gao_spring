@@ -99,6 +99,10 @@ public class HeatUnitService {
 	public final List<Double> getHeatUnit() {
 		return heatUnit;
 	}
+	
+	public final void setHeatUnit(List<Double> heatUnit) {
+		this.heatUnit = heatUnit;
+	}
 
 	public final void setHeatUnit() throws ParseException {
 		List<Double> result = new ArrayList<>();
@@ -260,7 +264,7 @@ public class HeatUnitService {
 	 */
 	@Override
 	public String toString() {
-		return "HeatUnitService\n [bloomDate=" + bloomDate + ",\n currentDate=" + currentDate + ",\n SumOfHeatUnit="
+		return "HeatUnitService\n Station: " + stationName+ "[bloomDate=" + bloomDate + ",\n currentDate=" + currentDate + ",\n SumOfHeatUnit="
 				+ SumOfHeatUnit + ",\n prediction=" + prediction + ",\n maxHeatUnit=" + maxHeatUnit + "]";
 	}
 
