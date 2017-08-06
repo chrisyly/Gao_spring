@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.ucdavis.application.AppProperties;
 import com.ucdavis.application.DateRequest;
 
+@Service
 public class CimisAPIService {
 
 	private String URL = "http://et.water.ca.gov/api/data?";
@@ -39,6 +40,10 @@ public class CimisAPIService {
 	private String zipcodeExt;
 	
 	private String station;
+	
+	private Integer stationNbr;
+	
+	private Map<Integer, List<String>> mapNbrAndZip;
 	
 	private String json;
 	
@@ -56,19 +61,76 @@ public class CimisAPIService {
 
 	private ArrayList<ArrayList<ArrayList<String>>> arrayType = new ArrayList<>();
 	
-	public CimisAPIService(DateRequest dateRequest, AppProperties properties) {
+	public CimisAPIService(DateRequest dateRequest, AppProperties properties) throws JSONException, Exception {
 		this.APPKEY = properties.getApi().getKey();
 		this.bloomDate = dateRequest.getBloomDate();
 		this.currentDate = dateRequest.getCurrentDate();
 		this.zipcode = dateRequest.getStation().substring(0, 5);// 5 digit zip code
 		this.zipcodeExt = dateRequest.getStation().substring(6, 10); //  4 digit extension
 		this.station = dateRequest.getStation().substring(10,dateRequest.getStation().length()); // station name specified
+		this.mapNbrAndZip = findMapNbrAndZip();
+		this.stationNbr = findStationNbr(this.getZipcode());
+	}
+
+	private Integer findStationNbr(String zipcode) {
+		Integer result = null;
+		Iterator it = this.mapNbrAndZip.keySet().iterator();
+		while (it.hasNext()) {
+			Integer stationId = (Integer) it.next();
+			if (this.mapNbrAndZip.get(stationId).contains(zipcode)) {
+				return stationId;
+			}
+		}
+		
+		return result;
+	}
+
+	private Map<Integer, List<String>> findMapNbrAndZip() throws JSONException, Exception {
+		JSONObject rawStationInfo = new JSONObject(readUrl("http://et.water.ca.gov/api/station"));
+		
+		Map<Integer, List<String>> nbrMapZipcodes = new HashMap<>();
+		boolean isActive = false;
+		Integer stationNbr = null;
+		
+		JSONArray stations = rawStationInfo.getJSONArray("Stations");
+		
+		for (int i = 0; i < stations.length(); i++) {
+			JSONObject object =(JSONObject) stations.get(i);
+		
+			String booleanValue = (String)object.get("IsActive");
+			isActive = booleanValue.equals("True") ? true : false;
+		
+			if (isActive) {
+				stationNbr = Integer.parseInt((String)object.get("StationNbr"));
+				List<String> zipCodes = new ArrayList<>();
+				Object zipValue = object.get("ZipCodes");
+				JSONArray zipArray = (JSONArray) zipValue;
+				for (int j = 0; j < zipArray.length(); j++ ) {
+					zipCodes.add((String)zipArray.get(j));
+				}
+				nbrMapZipcodes.put(stationNbr, zipCodes);
+			} else {
+				continue;
+			}
+		}
+		
+		return nbrMapZipcodes;
 	}
 
 	public CimisAPIService() {
 		super();
 	}
 	
+	
+	
+	public void setMapNbrAndZip(Map<Integer, List<String>> mapNbrAndZip) {
+		this.mapNbrAndZip = mapNbrAndZip;
+	}
+	
+	public Map<Integer, List<String>> getMapNbrAndZip() {
+		return this.mapNbrAndZip;
+	}
+
 	public Double getMaxHeatUnit() {
 		return MaxHeatUnit;
 	}
@@ -159,7 +221,7 @@ public class CimisAPIService {
 		
 
 		builder.append("&targets=");
-		builder.append("2");
+		builder.append(this.stationNbr);
 	
 		
 		builder.append("&startDate=");
