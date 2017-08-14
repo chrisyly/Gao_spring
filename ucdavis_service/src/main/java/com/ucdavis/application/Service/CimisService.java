@@ -21,7 +21,7 @@ import org.json.JSONException;
 public class CimisService {
 	/// singleton reference
 	private static final CimisService cimisService = new CimisService();
-	private AppProperties 
+	private AppProperties appProperty; 
 	private String appKey;
 
 	public CimisService() {
@@ -51,7 +51,7 @@ public class CimisService {
 			System.err.println("Failed to fetch URL: " + query + "\n" + e.printStackTrace());
 		} finally {
 			if (reader != null) {
-				reader.close();
+				bufferReader.close();
 			}
 		}
 		return jsonObject;
