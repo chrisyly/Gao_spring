@@ -1,7 +1,10 @@
-package com.ucdavis.application.Service;
-import com.ucdavis.application.AppPropert;
+
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.StringBuilder;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /// import json dependency
 import org.json.JSONObject;
@@ -21,7 +24,6 @@ import org.json.JSONException;
 public class CimisService {
 	/// singleton reference
 	private static final CimisService cimisService = new CimisService();
-	private AppProperties appProperty; 
 	private String appKey;
 
 	public CimisService() {
@@ -33,9 +35,8 @@ public class CimisService {
 	public static CimisService getService() {
 		return cimisService;
 	}
-
-	public JSONObject processRequestQuery(String query) {
-		// send url query
+	
+    public JSONObject processRequestQuery(String query) {
 		BufferedReader bufferedReader = null;
 		try {
 			URL url = new URL(query);
@@ -45,15 +46,23 @@ public class CimisService {
 			while ((line = bufferedReader.readLine()) != null) {
 				jsonStringBuilder.append(line);
 			}
-			System.out.println(jsonStringBuilder.toString());
+			//System.out.println(jsonStringBuilder.toString());
 			JSONObject jsonObject = new JSONObject(jsonStringBuilder.toString());
+			// TODO update data using jsonObject
+			return jsonObject;
 		} catch (IOException e) {
-			System.err.println("Failed to fetch URL: " + query + "\n" + e.printStackTrace());
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
-			if (reader != null) {
-				bufferReader.close();
+			try {
+				bufferedReader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		return jsonObject;
-	}
+		return null;
+    }
 }
