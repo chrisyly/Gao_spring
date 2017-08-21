@@ -14,14 +14,6 @@ import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-/**
- * @author Mushi
- *
- */
-/**
- * @author Mushi
- *
- */
 public class JsonParser {
 
 	// constructor, super
@@ -29,9 +21,8 @@ public class JsonParser {
 		super();
 	}
 	
-	/**
-	 * @param string
-	 * @return
+	/*
+	 * read from a string, return the JSON object
 	 */
 	public JSONObject readFrom(String string) {
 		try {
@@ -41,10 +32,9 @@ public class JsonParser {
 		}
 		return null;
 	}
-
-	/**
-	 * @param file
-	 * @return
+	
+	/*
+	 * read from a File, return the JSON object
 	 */
 	@SuppressWarnings("finally")
 	public JSONObject readFrom(File file) {
@@ -63,12 +53,14 @@ public class JsonParser {
 		} finally {
 			return null;
 		}
-	}
 
-	/**
-	 * @param jsonString
-	 * @return
+	}
+	
+
+	/*
+	 * convert a String(JSON) to Map
 	 */
+	
 	public Map<String, String> jsonStringToMap(String jsonString) {
 	    JSONObject json;
 	    Map<String, String> rstMap = new HashMap<>();
@@ -126,53 +118,14 @@ public class JsonParser {
 			e.printStackTrace();
 			return null;
 		}
-		
 			
 		return rstList;
 	}
 	
-	/**
-	 * @param jsonArray
-	 * @return
+	/*
+	 * return List<JSONObject> from JSONArray
 	 */
 	public List<JSONObject> getListFromJson(JSONArray jsonArray) {
 		return getListFromJson(jsonArray.toString());
 	}
-	
-	/*
-	 * extract data item from origin JSONArray
-	 */
-	public JSONArray extractDataItems(JSONArray jsonArray) {
-		return extractDataItems(jsonArray.toString());
-	}
-	
-	/*
-	 * extract data item from origin JSONArrayString
-	 */
-	public JSONArray extractDataItems(String inputString) {
-		JSONArray jsonArray;
-		try {
-			jsonArray = new JSONArray(inputString);
-			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject obj = (JSONObject)jsonArray.get(i);
-				
-				// traverse JSONObject
-				Iterator<?> itr = obj.keys();
-				while (itr.hasNext()) {
-					String key = (String) itr.next();
-					// define if value is instance of JSONObject, else do nothing
-					if (obj.get(key) instanceof JSONObject) {
-						obj.put(key, ((JSONObject)obj.get(key)).get("Value").toString());
-					}
-				}
-			}
-		} catch (JSONException e) {
-			System.err.println("[FAIL] Failed to read JSONArray from input: <" + inputString +">");
-			e.printStackTrace();
-			return null;
-		}
-			
-		return jsonArray;
-	}
-	
 }
