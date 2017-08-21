@@ -1,5 +1,11 @@
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,185 +13,111 @@ import org.json.JSONObject;
 /**
  * 
  * @author Mushi
- * Aug.19th, 2017
+ * Aug.19th
  */
 public class UCDavisService {
-
-	private List<JSONObject> records;
-	private List<String> dates;
-	private List<Double> temps;
-	private List<String> zipcodes;
-	private List<Double> heatUnits;
-	private String scope;
-
-	// constructor
-	public UCDavisService() {
-		super();
-	}
 	
-	// constructor
-	public UCDavisService(List<JSONObject> records) {
-		this.records = records;
-	}
+	private Map<String, String> mapOfRequest;
 	
-	// set all data
-	public void setAllResponse() {
-		setDates();
-		setTemps();
-		setZipcodes();
-		setHeatUnits();
-	}
+	public static Map<String, Map<String, String>> data = new HashMap<>();
 
-	// getter and setter
-	public List<JSONObject> getRecords() {
-		return records;
-	}
-
-	public void setRecords(List<JSONObject> records) {
-		this.records = records;
-	}
-
-	// getter and setter, dates
-	public List<String> getDates() {
-		return dates;
-	}
-
-	public void setDates(List<String> dates) {
-		this.dates = dates;
-	}
-
-	public void setDates() {
-		this.dates = readFromRecords("Date", this.records);
-	}
+	public JSONObject temp;
 	
-	// getter and setter, temps
-	public List<Double> getTemps() {
-		return temps;
-	}
-
-	public void setTemps(List<Double> temps) {
-		this.temps = temps;
-	}
+	public UCDavisService() {}
 	
-	public void setTemps() {
-		List<String> tempsString = readFromRecords("DayAirTmpAvg", this.records);
-		this.temps = extractTempData(tempsString);
-	}
-
-	// getter and setter, zipcodes
-	public List<String> getZipcodes() {
-		return zipcodes;
-	}
-
-	public void setZipcodes(List<String> zipcodes) {
-		this.zipcodes = zipcodes;
-	}
-	
-	public void setZipcodes() {
-		this.zipcodes = readFromRecords("ZipCodes", this.records);
-	}
-
-	// getter and setter, Scope
-	public String getScope() {
-		return scope;
-	}
-
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-	
-	public void setScope() {
-		this.scope = readFromRecords("Scope", this.records).get(0);
-	}
-
-	//getter and setter, heat units
-	public List<Double> getHeatUnits() {
-		return heatUnits;
-	}
-
-	public void setHeatUnits(List<Double> heatUnits) {
-		this.heatUnits = heatUnits;
-	}
-	
-	public void setHeatUnits() {
-		this.heatUnits = getHeatUnitList(this.temps);
-	}
-	// functions
-	/**
-	 * read the list of JSONObject, and return List of value to the specific key
-	 * @param key
-	 * @return list of specific data
-	 */
-	public List<String> readFromRecords(String key, List<JSONObject> records) {
-		List<String> rst = new ArrayList<>();
-		//traverse records
-		for (JSONObject record : records) {
-			try {
-				rst.add(record.get(key).toString());
-			} catch (JSONException e) {
-				System.err.println("[Fail] Fail to read JSONObject with key: <" + key + ">");
-				e.printStackTrace();
-			}
-		}
-		return rst;
-	}
-
-	/**
-	 * parse List<String> temperature data to List<Double>
-	 * @param tempSet
-	 * @return list of Double, temperature(F)
-	 */
-	public List<Double> extractTempData(List<String> tempSet) {
-		List<Double> extracted = new ArrayList<>();
-		//traverse tempSet
-		for (String temp : tempSet) {
-			extracted.add(Double.parseDouble(temp));
-		}
-		return extracted;
-	}
-	
-	/**
-	 * transfer Fahrenheit to Celsius, and calculate the heat unit
-	 * @param FTemps
-	 * @return list of Heat Units
-	 */
-	public List<Double> getHeatUnitList(List<Double> FTemps) {
-		List<Double> heatUnits = new ArrayList<>();
-		for (Double FTemp : FTemps) {
-			Double CTemp = (FTemp - 32) / 1.8 - 7;
-			heatUnits.add(CTemp);
-		}
-		return heatUnits;
-	}
-	
-	/**
-	 * return sum of Heat Units by list of Heat Units
-	 * @param heatUnits
-	 * @return sum of heat units
-	 */
-	public Double sumOfHeatUnits(List<Double> heatUnits) {
-		Double sum = (double) 0;
-		for (Double heatUnit : heatUnits) { sum += heatUnit;}
-		return sum;
-	}
-	
-	/**
-	 * using StringBuilder to build up the result
-	 * @return result type
-	 */
-	public String typeResult() {
-		StringBuilder builder = new StringBuilder("Result:");
-		// add period description
-		builder.append(" from <" + this.getDates().get(0) + "> to <" + this.getDates().get(this.getDates().size() - 1)+ ">");
-		// add heat units
-		builder.append("\n");
-		builder.append("Heat Units: <");
-		builder.append(this.getHeatUnits().toString() + ">");
-		// add heat units
-		builder.append("\n");
-		builder.append("Total Heat Units: <");
-		builder.append(sumOfHeatUnits(this.getHeatUnits()).toString() + ">");
+	// read from local CSV, TODO
+	public UCDavisService(String todo) {
 		
-		return builder.toString();
+	}
+	
+	// save data into local Map:data
+	public void getDataFromList(List<JSONObject> records) {
+		// traverse the list
+		Map<String, String> recordMap = new HashMap<>();
+		for (JSONObject record : records) {
+			// find the key of recordMap, date & hour
+			String dateValue = record.get("Date");
+		}
+		UCDavisService.data.put(this.mapOfRequest.get("targets"), recordMap);
+	}
+	
+	// local CSV
+	public void getDataFromCSV(String csvPath) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(csvPath));
+			String line = null;
+			String cvsSplitBy = ",";
+			
+			
+		} catch (FileNotFoundException e) {
+			System.err.println("[Fail]Fail to find the file");
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	// TODO, database
+	public void updateData() {
+		
+	}
+	
+	/**
+	 * write List<JSONObject> to CSV, file name is the key of map
+	 */
+	public void writeToCSV(List<JSONObject> records, String fileName) {
+		File file = new File("/" + fileName +".csv");
+	}
+	
+	public String calculateHeatUnitResult(String key) {
+		return null;
+	}
+
+	/**
+	 * parse the request string, and return map of params of request
+	 * @param request
+	 * @return
+	 */
+	public Map<String, String> processQuery(String request) {
+		Map<String, String> queryMap = new HashMap<>();
+		String keyWord;
+		// check targets
+		if (request.contains("targets")) {
+			keyWord =  "targets";
+			int index = request.indexOf(keyWord) + keyWord.length();
+			// check if white space or '='
+			while (index < request.length() && ((request.charAt(index) == '=') || Character.isWhitespace(request.charAt(index)))) index++;
+			// find the end of value of targets
+			int i = index;
+			while (i < request.length() && Character.isDigit(request.charAt(i))) i++;
+			System.out.println(i);
+			queryMap.put("targets", request.substring(index, i));
+		}
+		
+		// check start_date
+		if (request.contains("start_date")) {
+			keyWord = "start_date";
+			int index = request.indexOf(keyWord) + keyWord.length();
+			//check if white space and '='
+			while (index < request.length() && ((request.charAt(index) == '=') || Character.isWhitespace(request.charAt(index)))) index++;
+			queryMap.put(keyWord, request.substring(index, index + 10));
+		}
+		
+		// check end_date
+		if (request.contains("end_date")) {
+			keyWord = "end_date";
+			int index = request.indexOf(keyWord) + keyWord.length();
+			while (index < request.length() && ((request.charAt(index) == '=') || Character.isWhitespace(request.charAt(index)))) index++;
+			int i = index;
+			queryMap.put(keyWord, request.substring(i, i + 10));
+		}
+		
+		// check the method TODO
+		if (request.contains("method")) {
+			keyWord = "method";
+			// do nothing
+		}
+		
+		return queryMap;
 	}
 }
