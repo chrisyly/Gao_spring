@@ -6,8 +6,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -182,7 +186,47 @@ public class UCDavisService {
 		}
 	}
 	
-	public String calculateHeatUnitResult(String key) {
+	public String calculateHeatUnitResult(String query) {
+		Map<String, String> dataMap = processQuery(query);
+		System.out.println(dataMap.toString());
+		Map<String, String> tempDate = new HashMap<>();
+		// get query items
+		String startDate = dataMap.get("start_date");
+		String endDate = dataMap.get("end_date");
+		String target = dataMap.get("targets");
+		String hourly = dataMap.get("hourly");
+		// converting dates
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date start = sdf.parse(startDate);
+			Date end  = sdf.parse(endDate);
+			if (hourly.equals("false")) {
+				tempDate = data.get(target).get("DayAirTmpAvg");
+			} else {} // hourly applied, TODO
+			
+			double totalHU = 0.0;
+			StringBuilder resultBuilder = new StringBuilder(); 
+			while (start.before(end) || start.equals(end)) {
+				resultBuilder.append("Date:");
+				resultBuilder.append(sdf.format(start) + ", ");
+				resultBuilder.append("HeatUnit: ");
+				Double heatUnit = 0.0;
+				if (tempDate.get(sdf.format(start)) != null) heatUnit = Double.parseDouble(tempDate.get(sdf.format(start)));
+				totalHU += heatUnit; 
+				resultBuilder.append(heatUnit + ", ");
+				resultBuilder.append("Total: ");
+				resultBuilder.append(totalHU);
+				resultBuilder.append("\n");
+				// add one day
+				start = sdf.parse((addOneDay(sdf.format(start))));
+			}
+			return resultBuilder.toString();
+		} catch (ParseException e) {
+			System.err.println("[FAIL]Fail to parse date string");
+			e.printStackTrace();
+		}
+
+		
 		return null;
 	}
 
@@ -224,6 +268,18 @@ public class UCDavisService {
 			queryMap.put(keyWord, request.substring(i, i + 10));
 		}
 		
+		// check daily or hourly
+		if (request.contains("hourly")) {
+			keyWord = "hourly";
+			int index = request.indexOf(keyWord) + keyWord.length();
+			while (index < request.length() && ((request.charAt(index) == '=') || Character.isWhitespace(request.charAt(index)))) index++;
+			if (request.substring(index, index + 5).contains("true")) {
+				queryMap.put(keyWord, "true");
+			} else {
+				queryMap.put(keyWord, "false");
+			}
+		}
+		
 		// check the method TODO
 		if (request.contains("method")) {
 			keyWord = "method";
@@ -236,5 +292,21 @@ public class UCDavisService {
 	// getter and setter
 	public Map<String, Map<String, Map<String, String>>> getData() {
 		return data;
+	}
+	
+	public String addOneDay(String date) {
+		String newDate = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		try {
+			c.setTime(sdf.parse(date));
+			c.add(Calendar.DATE, 1);  // number of days to add
+			newDate = sdf.format(c.getTime());  // dt is now the new date
+			return newDate;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return newDate;
 	}
 }

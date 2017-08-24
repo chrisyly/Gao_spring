@@ -26,6 +26,8 @@ public class CimisService {
 	private static final CimisService cimisService = new CimisService();
 	private String appKey;
 	
+	
+	private static String[] allDefaultKeys = {"Date","julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg", "day-air-temp-max", "day-air-tmp-min","day-asce-eto", "day-sol-rad-avg", "day-wind-spd-avg"};
 	private static String[] stNbrDailyKeys = {"Date","julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg", "day-air-temp-max", "day-air-tmp-min"};
 	private static String[] stNbrDailyAvgKeys = {"date", "julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg"};
 	private static String[] stNbrHourlyKeys = {"date", "julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg", "hour"};

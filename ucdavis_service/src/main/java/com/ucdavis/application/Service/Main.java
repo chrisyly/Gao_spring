@@ -32,6 +32,9 @@ public class Main {
 		davisService.readLocalCsv();
 		System.out.println(davisService.getData().toString());
 		
+		String query = "start_date=2017-01-01&end_date=2017-01-10&targets=88&hourly=false";
+		System.out.println(davisService.calculateHeatUnitResult(query));
+
 		/*
 		String base = "http://et.water.ca.gov/api/data?appKey=4a3b5300-f248-4b6a-bb49-8368d1cac187&targets=2";
 		String ext = "&startDate=2017-01-01&endDate=2017-01-10&dataItems=day-air-tmp-avg";
