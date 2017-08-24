@@ -25,6 +25,13 @@ public class CimisService {
 	/// singleton reference
 	private static final CimisService cimisService = new CimisService();
 	private String appKey;
+	
+	private static String[] stNbrDailyKeys = {"Date","julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg", "day-air-temp-max", "day-air-tmp-min"};
+	private static String[] stNbrDailyAvgKeys = {"date", "julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg"};
+	private static String[] stNbrHourlyKeys = {"date", "julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg", "hour"};
+	private static String[] zipcodeDailyKeys = {"date", "julian", "standard", "zipCodes", "scope", "day-asce-eto", "day-sol-rad-avg", "day-wind-spd-avg"};
+	private static String[] zipcodeDailyAvgKeys = {"date", "julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg"};
+	private static String[] zipcodeHourlyKeys = {"date", "julian", "station", "standard", "zipcodes", "scope", "day-air-tmp-avg", "hour"};
 
 	public CimisService() {
 		/// Set appKey
@@ -36,6 +43,9 @@ public class CimisService {
 		return cimisService;
 	}
 	
+	/*
+	 * read String url query and return JSONObject
+	 */
     public JSONObject processRequestQuery(String query) {
 		BufferedReader bufferedReader = null;
 		try {
@@ -64,5 +74,12 @@ public class CimisService {
 			}
 		}
 		return null;
+    }
+    
+    /*
+     * write JSONArray to CSV
+     */
+    public void writeToCsv(JSONArray jsonArray) {
+    	
     }
 }

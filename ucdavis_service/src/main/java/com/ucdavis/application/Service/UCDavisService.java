@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,17 +25,12 @@ import com.opencsv.CSVReader;
  */
 public class UCDavisService {
 	
-	private Map<String, String> mapOfRequest;
-	
-	public static Map<String, Map<String, String>> data = new HashMap<>();
+	public Map<String, Map<String, Map<String, String>>> data = new HashMap<>();
 
-	public JSONObject temp;
-	
 	public UCDavisService() {}
 	
-	// read from local CSV, TODO
+	// read from local CSV, TODO : debug mode, read local csv only....
 	public UCDavisService(String todo) {
-		
 	}
 	
 	// save data into local Map:data
@@ -46,40 +43,35 @@ public class UCDavisService {
 	 * @return Map<String, Map<String, String>> targetAndData
 	 * Updated: Aug.21st, Mushi
 	 */
-	public Map<String, Map<String, String>> getDataMapFromCSV(String csvPath) {
-		Map<String, Map<String, String>> targetAndData = new HashMap<>();
-    	Map<String, String> DateAndTemp = new HashMap<>();
-    	
+	// Aug.22nd
+	public void getDataMapFromCSV(String csvPath) {
+		Map<String, Map<String, String>> dateMap = new HashMap<>();
 		BufferedReader br = null;
-        String line = "";
-        String cvsSplitBy = ",";
-        boolean isFirstRow = true;
-        // initialize the item index
-        int indexOfDate = 0;
-		int indexOfHour = 0;
-		int indexOfTemp = 0;
-		int indexOfHlyTemp = 0;
-
+        String splitToken = ",";
+        
         try {
             br = new BufferedReader(new FileReader(csvPath));
+            String line;
+            String[] titles = br.readLine().split(splitToken);
+            List<String> lines = new ArrayList<String>();
             while ((line = br.readLine()) != null) {
-            	String[] items = line.split(cvsSplitBy);
-            	if (isFirstRow) {
-            		 indexOfDate = Arrays.asList(items).indexOf("Date");
-            		 indexOfHour = Arrays.asList(items).indexOf("Hour");
-            		 indexOfTemp = Arrays.asList(items).indexOf("DayAirTmpAvg");
-            		 indexOfHlyTemp = Arrays.asList(items).indexOf("HlyAirTmp");
-            		 isFirstRow = false;
-            		 continue;
-            	}
-            	// matching data and temperature
-            	if (indexOfHour == -1) { // daily
-					DateAndTemp.put(items[indexOfDate], items[indexOfTemp]);
-				} else { // hourly
-					DateAndTemp.put(items[indexOfDate] + ":" +items[indexOfHour] , items[indexOfHlyTemp]);
-				}
+            	lines.add(line);
             }
-            targetAndData.put(new File(csvPath).getName(), DateAndTemp);
+        	for (int i = 0; i < titles.length; i++) {
+            	Map<String, String> dataItemMap = new HashMap<>();
+        		for (int j = 1; j < lines.size(); j++) {
+        			String[] dataItems = lines.get(j).split(splitToken);
+            		dataItemMap.put(dataItems[Arrays.asList(titles).indexOf("Date")], dataItems[i]);
+            	}
+        		dateMap.put(titles[i], dataItemMap);
+        		
+            }
+            csvPath = csvPath.replaceAll(".*/", "");
+            if (data.containsKey(csvPath.replace(".csv", ""))) {
+            	data.get(csvPath.replace(".csv", "")).putAll(dateMap);
+            } else {
+            	data.put(csvPath.replace(".csv", ""), dateMap);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -93,12 +85,52 @@ public class UCDavisService {
                 }
             }
         }
-        return targetAndData;
+	}
+	
+	public void getDataMapFromCSV(File file) {
+		getDataMapFromCSV(file.getAbsolutePath());
+	}
+	
+	public void readLocalCsv() {
+		Path currentPath = Paths.get("");
+		String folderPath = currentPath.toAbsolutePath().toString();
+		//System.out.println(folderPath);
+		for (final File file : new File(folderPath).listFiles()) {
+			//System.out.println(file.getName());
+			if (file.getName().contains(".csv")) {
+				getDataMapFromCSV(file);
+			}
+		}
 	}
 	
 	// TODO, database
 	public void updateData() {
 		
+	}
+	
+	public void writeToMap(List<JSONObject> records, String target) {
+		Map<String, Map<String,String>> dataItems = new HashMap<>();
+		Iterator<?> keys = records.get(0).keys();
+		String key = "";
+		while (keys.hasNext()) {
+			key = (String) keys.next();
+			Map<String, String> tmpBase = new HashMap<>();
+			for (JSONObject record : records) {
+				try {
+					tmpBase.put(record.getString("Date"), record.getString(key));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			//System.out.println("TmpBase: " + tmpBase.toString());
+			dataItems.put(key, tmpBase);
+		}
+		if (data.containsKey(target)) {
+			data.get(target).putAll(dataItems);
+		} else {
+			data.put(target, dataItems);
+		}
 	}
 	
 	/**
@@ -137,14 +169,16 @@ public class UCDavisService {
 		}
 		
 		// csv
-		PrintWriter pw;
-		try {
-			pw = new PrintWriter(new File(fileName+".csv"));
-			pw.write(csv.toString());
-	        pw.close();
-	        System.out.println("csv file: <" + fileName + "> created");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		if (csv.length() > 0) {
+			try {
+				PrintWriter pw;
+				pw = new PrintWriter(new File(fileName+".csv"));
+				pw.write(csv.toString());
+		        pw.close();
+		        System.out.println("csv file: <" + fileName + "> created");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -197,5 +231,10 @@ public class UCDavisService {
 		}
 		
 		return queryMap;
+	}
+	
+	// getter and setter
+	public Map<String, Map<String, Map<String, String>>> getData() {
+		return data;
 	}
 }
