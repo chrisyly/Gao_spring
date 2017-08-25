@@ -205,22 +205,17 @@ public class UCDavisService {
 			} else {} // hourly applied, TODO
 			
 			double totalHU = 0.0;
-			StringBuilder resultBuilder = new StringBuilder(); 
+			StringBuilder resultBuilder = new StringBuilder("Start Date: " + sdf.format(start) + ", " + "End Date: " + sdf.format(end));
+			resultBuilder.append("\n");
 			while (start.before(end) || start.equals(end)) {
-				resultBuilder.append("Date:");
-				resultBuilder.append(sdf.format(start) + ", ");
-				resultBuilder.append("HeatUnit: ");
 				Double heatUnit = 0.0;
 				DecimalFormat df = new DecimalFormat("#.00");
 				if (tempDate.get(sdf.format(start)) != null) heatUnit = Double.valueOf(df.format(Double.parseDouble(tempDate.get(sdf.format(start)))));
 				totalHU = Double.valueOf(df.format(totalHU +  heatUnit)); 
-				resultBuilder.append(heatUnit + ", ");
-				resultBuilder.append("Total: ");
-				resultBuilder.append(totalHU);
-				resultBuilder.append("\n");
 				// add one day
 				start = sdf.parse((addOneDay(sdf.format(start))));
 			}
+			resultBuilder.append("Total heat unit: " + String.valueOf(totalHU));
 			return resultBuilder.toString();
 		} catch (ParseException e) {
 			System.err.println("[FAIL]Fail to parse date string");
