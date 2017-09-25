@@ -13,7 +13,7 @@ apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'ucdavis_service'
-    version =  '2.1.0'
+    version =  '2.1.1'
 }
 
 jar {

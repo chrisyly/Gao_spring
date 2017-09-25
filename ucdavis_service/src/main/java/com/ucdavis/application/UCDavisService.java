@@ -140,6 +140,47 @@ public class UCDavisService {
 		} else {
 			data.put(target, dataItems);
 		}
+		
+		checkNullKeysAndValue(dataItems, true);
+	}
+	
+	private void checkNullKeysAndValue(Map<String, Map<String,String>> dataItems, boolean isDaily) {
+		// daily keys
+		String[] dailyKeys = {"Date","DayAirTmpMax","DayWindRun","DayAsceEto","DaySolRadAvg","DayWindSpdAvg","DayPrecip","Standard","DayVapPresAvg","DaySoilTmpAvg","Station","DayRelHumMax","DayAirTmpAvg","DayAirTmpMin","Scope","DayDewPnt","DayRelHumAvg","DayRelHumMin","Julian","ZipCodes"};
+		
+		// TODO hourly keys
+		String[] hourlyKeys = {};
+		
+		SortedSet<String> sortedDateKeys = new TreeSet<String>(dataItems.get("Date").keySet()); // dates cant be null
+		System.out.println(sortedDateKeys.toString());
+		
+		// check the null keys and values
+		
+		String[] keys = isDaily? dailyKeys : hourlyKeys;
+		for (int i = 0; i < keys.length; i++) {
+			
+			
+			// no such key
+			if  (!dataItems.keySet().contains(keys[i])) {
+				System.out.println("<"+ keys[i] +">"+ " Not found!");
+				Map<String, String> values = new HashMap<>();
+				
+				for (String dateKey : sortedDateKeys) {
+					values.put(dateKey, "-1");
+				}
+				dataItems.put(keys[i], values); // add to dateItems
+			} else { // check if no values
+				System.out.println("<"+ keys[i] +">" + "Found!");
+				for (String dateKey : sortedDateKeys) {
+					
+					System.out.println(dataItems.get(keys[i]).get(dateKey).length() + " "+ dataItems.get(keys[i]).get(dateKey));
+					if (dataItems.get(keys[i]).get(dateKey).equals("null")) {
+						dataItems.get(keys[i]).put(dateKey, "0.0");
+					}
+					System.out.println(dataItems.get(keys[i]).get(dateKey).length() + " "+ dataItems.get(keys[i]).get(dateKey));
+				}
+			}
+		}
 	}
 	
 	public String[] getFirstDayAndLastDay(String target) {

@@ -66,6 +66,7 @@ public class ServiceController {
 		List<JSONObject> list = parser.getListFromJson(parser.extractDataItems((parser.jsonStringToMap(jsonObject)).get("Records").toString()));
 		// write map
 		davisService.writeToMap(list, queryMapping.get("targets"));
+		davisService.writeToCSV(queryMapping.get("targets"));
 		// get result
 		String heatUnitResult = davisService.calculateHeatUnitResult(query);
 		
