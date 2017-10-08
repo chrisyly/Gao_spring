@@ -9,6 +9,24 @@
   <title>Login Form</title>
   <link rel="stylesheet" href="css/style.css"/>
   <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Date');
+        data.addColumn('string', 'Heat Unit');
+        data.addColumn('string', 'Total');
+        data.addRows();
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+      }
+    </script>
 </head>
 <body>
 	<div class="pen-title">
@@ -16,12 +34,14 @@
 	</div>
   <section class="container">
     <div class="about">
-      <p th:text="${result}" />
+      <p th:text="${result}"/>
     </div>
+    
   </section>
 
   <section class="about">
     <h4>Welcome to UC Davis!</h4>
   </section>
+
 </body>
 </html>

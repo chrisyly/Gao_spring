@@ -17,10 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -117,8 +115,17 @@ public class UCDavisService {
 		
 	}
 	
-	public void writeToMap(List<JSONObject> records, String target) {
+	// Oct.3rd put in Request.class
+	// Function: findMissingDateKeys, checkNullKeysAndValue
+	
+	public void writeToMap(List<JSONObject> records, Request request) {
+		// null dataItems
 		Map<String, Map<String,String>> dataItems = new HashMap<>();
+		
+		// check if records is null, also date keys will be null
+		if (records == null) fillMissingDateKeys(dataItems, request);
+		
+		// Date keys settled
 		Iterator<?> keys = records.get(0).keys();
 		String key = "";
 		while (keys.hasNext()) {
@@ -135,12 +142,86 @@ public class UCDavisService {
 			//System.out.println("TmpBase: " + tmpBase.toString());
 			dataItems.put(key, tmpBase);
 		}
-		if (data.containsKey(target)) {
-			data.get(target).putAll(dataItems);
+		if (data.containsKey(request.getTargets())) {
+			data.get(request.getTargets()).putAll(dataItems);
 		} else {
-			data.put(target, dataItems);
+			data.put(request.getTargets(), dataItems);
+		}
+		
+		fillMissingDateKeys(dataItems, request); // date sequence is not continuous
+		checkNullKeysAndValue(dataItems, true); // check the null column and value
+	}
+	
+	private void fillMissingDateKeys(Map<String, Map<String,String>> dataItems,  Request request) {
+		String start = request.getStart_date();
+		String end = request.getEnd_date();
+		
+		while (!start.equals(end)) {
+			// Initialize the dateMap
+			Map<String, String> dateMap = new HashMap<>();
+			//case 1: no find "Date" key
+			if (!dataItems.containsKey("Date")) {
+				dateMap.put(start, start);
+				dataItems.put("Date", dateMap);
+			} else {
+				// case 2: "Date" key exists already, check date is completed
+				if (!dataItems.get("Date").containsKey(start)) {
+					dateMap.put(start, start);
+					dataItems.get("Date").putAll(dateMap);
+					start = this.addOneDay(start);
+				} 
+				// case 3: "Date" key exists, date sequence completed
+				else {
+					start = this.addOneDay(start);
+					continue;
+				}
+			}
+			// iterate
+			start = this.addOneDay(start);
 		}
 	}
+	
+	private void checkNullKeysAndValue(Map<String, Map<String, String>> dataItems, boolean isDaily) {
+		// daily keys
+		String[] dailyKeys = {"Date","DayAirTmpMax","DayWindRun","DayAsceEto","DaySolRadAvg","DayWindSpdAvg","DayPrecip","Standard","DayVapPresAvg","DaySoilTmpAvg","Station","DayRelHumMax","DayAirTmpAvg","DayAirTmpMin","Scope","DayDewPnt","DayRelHumAvg","DayRelHumMin","Julian","ZipCodes"};
+		
+		// TODO hourly keys
+		String[] hourlyKeys = {};
+		
+		// Date keys are completed
+		Map<String, String> dates = dataItems.get("Date");
+		SortedSet<String> sortedDateKeys = new TreeSet<String>(dates.keySet()); // dates cant be null
+		System.out.println(sortedDateKeys.toString());
+		
+		// check the null keys and values
+		String[] keys = isDaily? dailyKeys : hourlyKeys;
+		for (int i = 0; i < keys.length; i++) {	
+			// no such key
+			if  (!dataItems.keySet().contains(keys[i])) {
+				System.out.println("<"+ keys[i] +">"+ " Not found!");
+				Map<String, String> values = new HashMap<>();
+				
+				for (String dateKey : sortedDateKeys) {
+					values.put(dateKey, "-1");
+				}
+				dataItems.put(keys[i], values); // add to dateItems
+			} 
+			else { // null values
+				System.out.println("<"+ keys[i] +">" + "Found!");
+				// if Map does not exist, create new one
+				Map<String, String> values = dataItems.get(keys[i]);
+				
+				for (String dateKey : sortedDateKeys) {
+					System.out.println(values.get(dateKey).length() + " "+ values.get(dateKey));
+					if (values.get(dateKey).equals("null")) {
+						values.put(dateKey, "0.0");
+					}
+					System.out.println(values.get(dateKey).length() + " "+ values.get(dateKey));
+				}
+			}
+		}
+	}
+	
 	
 	public String[] getFirstDayAndLastDay(String target) {
 		String[] result = new String[2];
