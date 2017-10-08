@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ucdavis.application.CimisService;
 import com.ucdavis.application.JsonParser;
+import com.ucdavis.application.OpenWeatherService;
 import com.ucdavis.application.Request;
 import com.ucdavis.application.UCDavisService;
 
@@ -65,10 +66,11 @@ public class ServiceController {
 		// JSONObject -> map -> extractDataItems -> list
 		List<JSONObject> list = parser.getListFromJson(parser.extractDataItems((parser.jsonStringToMap(jsonObject)).get("Records").toString()));
 		// write map
-		davisService.writeToMap(list, queryMapping.get("targets"));
+		davisService.writeToMap(list, request);
 		davisService.writeToCSV(queryMapping.get("targets"));
 		// get result
 		String heatUnitResult = davisService.calculateHeatUnitResult(query);
+		System.out.println(davisService.getData().toString());
 		
 		model.addAttribute("result", heatUnitResult);
 		
