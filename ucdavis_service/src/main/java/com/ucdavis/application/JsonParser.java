@@ -71,8 +71,11 @@ public class JsonParser {
 	 * @return
 	 */
 	public Map<String, String> jsonStringToMap(String jsonString) {
+		Map<String, String> rstMap = new HashMap<>();
+		// if jsonString is null, TODO
+		if (jsonString == null) return rstMap;
+		// not null
 	    JSONObject json;
-	    Map<String, String> rstMap = new HashMap<>();
 		try {
 			json = new JSONObject(jsonString);
 			Iterator<?> itr = json.keys();
@@ -116,6 +119,9 @@ public class JsonParser {
 	 */
 	public List<JSONObject> getListFromJson(String inputString) {
 		List<JSONObject> rstList = new ArrayList<>();
+		// if inputString is null
+		if (inputString == null) return rstList;
+		// not null
 		JSONArray jsonArray;
 		try {
 			jsonArray = new JSONArray(inputString);
